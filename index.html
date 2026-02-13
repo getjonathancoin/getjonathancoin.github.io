@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jonathan Coin | The Future of Finance</title>
+<style>
+  /* --- 1. CORE VARIABLES & RESET --- */
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+  :root {
+    --bg-deep: #050508;
+    --bg-glass: rgba(255, 255, 255, 0.03);
+    --bg-glass-hover: rgba(255, 255, 255, 0.08);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    
+    --primary: #7000ff;
+    --secondary: #00f0ff;
+    --accent: #ff0055;
+    
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    
+    --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* --- 2. LIVING BACKGROUND --- */
+  .ambient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: float 25s infinite ease-in-out alternate;
+  }
+
+  .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent 70%); }
+  .orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--secondary), transparent 70%); animation-delay: -5s; }
+  .orb-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: radial-gradient(circle, var(--accent), transparent 70%); opacity: 0.15; animation-delay: -10s; }
+
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(40px, 60px) scale(1.1); }
+  }
+
+  /* --- 3. ANNOUNCEMENT BAR --- */
+  .announcement-bar {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-glass);
+    padding: 0.8rem 0;
+    position: relative;
+    z-index: 50;
+    overflow: hidden;
+  }
+  
+  .announcement-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    white-space: nowrap;
+    animation: pulse-text 3s infinite ease-in-out;
+  }
+
+  @keyframes pulse-text {
+    0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); }
+    50% { opacity: 0.7; text-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+  }
+
+  /* --- 4. HERO SECTION --- */
+  .hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 1.5rem 2rem;
+    position: relative;
+  }
+
+  .hero-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    animation: fade-in-up 0.8s var(--ease-smooth) 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: fade-in-up 0.8s var(--ease-smooth) 0.4s forwards;
+  }
+
+  .hero p {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    color: var(--text-muted);
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fade-in-up 0.8s var(--ease-smooth) 0.6s forwards;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 1.5rem;
+    opacity: 0;
+    animation: fade-in-up 0.8s var(--ease-smooth) 0.8s forwards;
+  }
+
+  .btn {
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), #4c00b0);
+    color: white;
+    box-shadow: 0 10px 30px -10px rgba(112, 0, 255, 0.5);
+    border: none;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -10px rgba(112, 0, 255, 0.7);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(5px);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* --- 5. STATS STRIP --- */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid var(--border-glass);
+    border-top: 1px solid var(--border-glass);
+    background: rgba(255,255,255,0.01);
+  }
+  .stat-item {
+    text-align: center;
+    opacity: 0; /* JS trigger */
+  }
+  .stat-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* --- 6. FEATURES GRID --- */
+  .features-section {
+    padding: 6rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .section-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    opacity: 0; /* JS trigger */
+  }
+
+  .section-header p {
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0; /* JS trigger */
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    padding: 2.5rem;
+    transition: all 0.4s var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+    opacity: 0; /* JS trigger */
+    transform: translateY(20px);
+  }
+
+  .feature-card:hover {
+    background: var(--bg-glass-hover);
+    border-color: rgba(112, 0, 255, 0.4);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    color: var(--secondary);
+    font-size: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover .feature-icon {
+    background: var(--secondary);
+    color: #000;
+    box-shadow: 0 0 20px var(--secondary);
+  }
+
+  .feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  .feature-card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* --- 7. REVIEWS SECTION --- */
+  .reviews-section {
+    padding: 2rem 0 8rem;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+  }
+
+  .carousel-wrapper {
+    width: 100%;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+
+  .review-carousel {
+    display: flex;
+    gap: 24px;
+    width: max-content;
+    cursor: grab;
+    padding: 20px;
+  }
+
+  .review-carousel:active {
+    cursor: grabbing;
+  }
+
+  .review-card {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    min-width: 340px;
+    max-width: 340px;
+    padding: 2rem;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.1s linear, background 0.3s ease;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-inner {
+    transform: translateZ(20px);
+    pointer-events: none;
+  }
+
+  .review-card:hover {
+    background: var(--bg-glass-hover);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .reviewer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: border-color 0.3s ease;
+  }
+
+  .review-card:hover .avatar {
+    border-color: var(--secondary);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+  }
+
+  .reviewer-info h3 {
+    font-size: 1.1rem;
+    color: white;
+    font-weight: 700;
+  }
+
+  .reviewer-info span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .review-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #d1d5db;
+    font-style: italic;
+  }
+
+  .quote-mark {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 4rem;
+    color: rgba(255,255,255,0.03);
+    font-family: serif;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .review-card:hover .glow-line {
+    opacity: 1;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 3rem; }
+    .section-header h2 { font-size: 2rem; }
+    .review-card { min-width: 280px; max-width: 280px; padding: 1.5rem; }
+    .features-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="ambient-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <div class="announcement-content">
+      JONATHAN COIN IS THE BEST COIN
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-badge">v2.0 System Live</div>
+    <h1>The Future of<br>Decentralized Value</h1>
+    <p>Experience the next generation of blockchain technology. Secure, scalable, and undeniably superior.</p>
+    <div class="btn-group">
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn btn-primary">Get Started</a>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn btn-secondary">Read Whitepaper</a>
+    </div>
+  </header>
+
+  <!-- Stats Section -->
+  <section class="stats-strip">
+    <div class="stat-item">
+      <span class="stat-number">100k+</span>
+      <span class="stat-label">Transactions/Sec</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">0.001s</span>
+      <span class="stat-label">Finality Time</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">$0</span>
+      <span class="stat-label">Gas Fees</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">99.9%</span>
+      <span class="stat-label">Uptime</span>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2>Why Jonathan Coin?</h2>
+      <p>Built on a quantum-resistant ledger, designed for the next millennium.</p>
+    </div>
+    <div class="features-grid">
+      
+      <!-- Feature 1 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+        </div>
+        <h3>Lightning Speed</h3>
+        <p>Our proprietary "Flash-Chain" protocol processes transactions at the speed of light, making traditional banking obsolete.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h3>Ironclad Security</h3>
+        <p>Partnered with VirusTotal for real-time threat detection. Your assets are protected by military-grade encryption.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <h3>True Decentralization</h3>
+        <p>No CEO, no board, no single point of failure. The network is governed entirely by the community code.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        </div>
+        <h3>Global Scale</h3>
+        <p>Nodes分布在 every continent, ensuring low latency and high accessibility for users worldwide.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        </div>
+        <h3>Smart Contracts 2.0</h3>
+        <p>Execute complex logic with zero-knowledge proofs, keeping your data private while ensuring transparency.</p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        </div>
+        <h3>Eco-Friendly Mining</h3>
+        <p>Our Proof-of-Stake consensus uses 99.9% less energy than traditional mining, saving the planet.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="reviews-section">
+    <div class="section-header">
+      <h2 class="section-title">Community Trust</h2>
+    </div>
+
+    <div class="carousel-wrapper">
+      <div class="review-carousel" id="carousel">
+        
+        <!-- Card 1 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u1/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Alex Chen</h3>
+                <span>@CryptoWiz</span>
+              </div>
+            </div>
+            <p class="review-text">"Jonathan Coin is a game changer. The secure private transactions combined with speed make it my favorite crypto asset."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u2/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Sarah Jenkins</h3>
+                <span>@SatoshiFan</span>
+              </div>
+            </div>
+            <p class="review-text">"Love the mysterious vibe of Jonathan Coin — it's unlike any crypto I've used before. Plus, the community is incredibly supportive."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u3/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Marcus O.</h3>
+                <span>@BlockchainBeast</span>
+              </div>
+            </div>
+            <p class="review-text">"Fast transactions, top-notch security, and real potential. Jonathan Coin is on the rise!"</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u4/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Elena R.</h3>
+                <span>@CryptoQueen</span>
+              </div>
+            </div>
+            <p class="review-text">"This coin's subtle animations and dark design give it such a unique personality. Can't wait to see where it goes."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u5/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>David Kim</h3>
+                <span>@InvestSmart</span>
+              </div>
+            </div>
+            <p class="review-text">"Jonathan Coin isn't just hype; it delivers on promises with real tech behind it. Highly recommended."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 6 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u6/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>James T.</h3>
+                <span>@Hodler4Life</span>
+              </div>
+            </div>
+            <p class="review-text">"I've seen them come and go, but J-Coin is here to stay. The liquidity is unmatched."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 7 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u7/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Maya Lin</h3>
+                <span>@TechGuru</span>
+              </div>
+            </div>
+            <p class="review-text">"Finally, a coin that focuses on utility rather than just memes. The dev team is solid."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 8 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u8/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Robert F.</h3>
+                <span>@DayTrader</span>
+              </div>
+            </div>
+            <p class="review-text">"Volatility is high, but the trend is upward. My portfolio thanks Jonathan Coin."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 9 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u9/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Linda W.</h3>
+                <span>@FutureFin</span>
+              </div>
+            </div>
+            <p class="review-text">"The transaction fees are virtually non-existent. I send money globally for free. Incredible."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+        <!-- Card 10 -->
+        <article class="review-card">
+          <div class="quote-mark">“</div>
+          <div class="card-inner">
+            <div class="reviewer">
+              <img src="https://picsum.photos/seed/u10/100/100.jpg" alt="User" class="avatar">
+              <div class="reviewer-info">
+                <h3>Chris P.</h3>
+                <span>@Bacon</span>
+              </div>
+            </div>
+            <p class="review-text">"Never gonna give it up, never gonna let it down. Jonathan Coin is the only way."</p>
+          </div>
+          <div class="glow-line"></div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('carousel');
+      
+      // --- 1. INFINITE SCROLL SETUP ---
+      // Clone cards 3 times to ensure smooth infinite loop
+      const originalContent = slider.innerHTML;
+      slider.innerHTML = originalContent + originalContent + originalContent;
+      
+      const cards = document.querySelectorAll('.review-card');
+      
+      // State
+      let scrollPos = 0;
+      let speed = 0.8; // Pixels per frame
+      let isHovering = false;
+      let isDragging = false;
+      let startX;
+      let scrollLeft;
+
+      // --- 2. INTERSECTION OBSERVER FOR ANIMATIONS ---
+      // Generic observer for fading in elements
+      const observerOptions = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if(entry.target.classList.contains('section-header') || entry.target.classList.contains('feature-card') || entry.target.classList.contains('stat-item')) {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }
+            if(entry.target.classList.contains('section-title')) {
+              entry.target.classList.add('visible');
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Observe Features
+      document.querySelectorAll('.feature-card').forEach((el, index) => {
+        el.style.transitionDelay = `${index * 100}ms`; // Stagger effect
+        observer.observe(el);
+      });
+
+      // Observe Stats
+      document.querySelectorAll('.stat-item').forEach((el, index) => {
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(el);
+      });
+
+      // Observe Headers
+      document.querySelectorAll('.section-header h2, .section-header p').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(el);
+      });
+
+      // --- 3. 3D TILT EFFECT ---
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          if (isDragging) return;
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const xPct = x / rect.width;
+          const yPct = y / rect.height;
+          
+          const xRot = (0.5 - yPct) * 10;
+          const yRot = (xPct - 0.5) * 10;
+
+          card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+
+      // --- 4. AUTO SCROLL LOGIC ---
+      function animate() {
+        if (!isHovering && !isDragging) {
+          scrollPos += speed;
+          
+          const totalWidth = slider.scrollWidth / 3;
+          
+          if (scrollPos >= totalWidth) {
+            scrollPos = 0;
+          }
+          
+          slider.style.transform = `translateX(-${scrollPos}px)`;
+        }
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+
+      // --- 5. INTERACTION HANDLERS ---
+      slider.addEventListener('mouseenter', () => isHovering = true);
+      slider.addEventListener('mouseleave', () => isHovering = false);
+
+      slider.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX - slider.getBoundingClientRect().left;
+        scrollLeft = scrollPos; 
+        slider.style.cursor = 'grabbing';
+      });
+
+      slider.addEventListener('mouseleave', () => {
+        isDragging = false;
+        slider.style.cursor = 'grab';
+      });
+
+      slider.addEventListener('mouseup', () => {
+        isDragging = false;
+        slider.style.cursor = 'grab';
+      });
+
+      slider.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - slider.getBoundingClientRect().left;
+        const walk = (x - startX) * 1.5; 
+        scrollPos = scrollLeft - walk;
+        
+        const totalWidth = slider.scrollWidth / 3;
+        if (scrollPos < 0) scrollPos = 0;
+        if (scrollPos > totalWidth) scrollPos = totalWidth;
+        
+        slider.style.transform = `translateX(-${scrollPos}px)`;
+      });
+
+    });
+  </script>
+</body>
+</html>
